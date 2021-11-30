@@ -6,11 +6,13 @@ import {
 } from "react-router-dom";
 
 import ListPrizeDraw from './pages/ListPrizeDraw/ListPrizeDraw'
+import Draw from './pages/Draw/Draw';
 
 
 const App = () => {
     let routes = useRoutes([
       { path: "/", element: <ListPrizeDraw /> },
+      { path: "/draw", element: <Draw /> },
     ]);
     return routes;
   };
