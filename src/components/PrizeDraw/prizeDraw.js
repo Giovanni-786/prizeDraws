@@ -115,8 +115,6 @@ function HandleClick(e){
                     )
                 })}
                 
-    
-
 
       <Modal 
         open={open}
