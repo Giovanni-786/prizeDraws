@@ -1,12 +1,14 @@
 import { FaWhatsapp } from 'react-icons/fa';
 
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 
 import './styles.css';
+
+import api from '../../services/api';
 
 
 const style = {
@@ -21,12 +23,56 @@ const style = {
     p: 4,
   };
 
+
+
+
+
 export default function PrizeDraw(draws){
-    const [open, setOpen] = React.useState(false);
+    
+ const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-    
+  const [drawName, setDrawName] = useState('');
+  const [services, setServices] = useState([]);
+  const [dateDraw, setDateDraw] = useState('');
+
+  useEffect(() => {
+    api
+      .get("/draw/services")
+      .then((response) => setServices(response.data))
+      .catch((err) => {
+        console.error("ops! ocorreu um erro" + err);
+      });
+  }, [open]);
+
+
+
+
+  const storeDraw = async (e) => {
+    e.preventDefault();
+
+    if ((!drawName, !services, !dateDraw)) {
+        alert("Todos os campos devem ser informados");
+        return;
+      }
+
+      try {
+        const res = await api.post("/draw", {
+          name: drawName,
+          service_id: services,
+          date_draw: dateDraw
+        });
+
+        if (res.status === 200) {
+            alert('Sorteio criado com sucesso!')
+        }
+  
+     }catch{
+        alert("Erro inesperado ao cadastrar o card!");
+     }
+  }
+
 
     return(
     <section className="container">  
@@ -46,22 +92,45 @@ export default function PrizeDraw(draws){
             </div>
 
     
+
+
       <Modal 
         open={open}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
+        props={services}
       >
+          
         <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Text in a modal
+          <Typography id="modal-modal-title" variant="h6" component="h2" style={{color: 'black', margin: '20px', padding: '8px'}}>
+            <h2>Criação de sorteio</h2>
+            
+            <p>Nome do sorteio</p> <input name='nameDraw' type="text" onChange={(event) => setDrawName(event.target.value)}></input>
+            <p>Conexão</p>
+               
+            <select onChange={(event) => setServices(event.target.value)} type="text" style={{width: '200px'}}>
+            {services.map(item=>{
+            return(
+            <>
+            <option style={{overflow: 'hidden', textOverflow: 'ellipsis'}} key={item.id} value={item.id}>{item.name}</option>
+            </>
+            )               
+            })}
+            </select>
+            
+            <p>Data do sorteio</p> <input onChange={(event) => setDateDraw(event.target.value)} type="date"></input>
+            
           </Typography>
+          <button style={{color: 'black', border: '1px solid black', width: '100px', height: '30px'}} type="button" onClick={storeDraw}>Criar</button>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+            
           </Typography>
         </Box>
       </Modal>
 
     </section>
     )
+
+    
 }
