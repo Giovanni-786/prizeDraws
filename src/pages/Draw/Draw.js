@@ -14,14 +14,14 @@ export default function Draw(){
     return(
         <>
         <Header/>
-        <section className="container">
+        <section className="container-draw">
             <div className="draw-content">
               <img src={Trofeu} alt="Trofeu logo"></img> <input type="text" disabled></input> 
             </div>
 
             
         </section>
-        <div>
+        <div className={"infos"}>
         <button type="button">Sortear agora</button>
         </div>
         
